@@ -78,4 +78,19 @@ class AppTextStyles {
       height: lineHeight,
     );
   }
+
+   //------------------------------ Poppins Font Styles --------------------------------//
+  static TextStyle s12w4arimo({
+    Color? color,
+    double fontSize = 12,
+    double lineHeight = 1,
+    FontWeight fontweight = FontWeight.w400,
+  }) {
+    return GoogleFonts.arimo(
+      color: color ?? AppColors.titleText,
+      fontSize: fontSize.sp,
+      fontWeight: fontweight,
+      height: lineHeight,
+    );
+  }
 }

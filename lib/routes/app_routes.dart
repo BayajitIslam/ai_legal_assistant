@@ -9,17 +9,19 @@ import 'package:template/features/auth/screens/password_reset.dart';
 import 'package:template/features/auth/screens/sign_in_screen.dart';
 import 'package:template/features/auth/screens/sign_up_screen.dart';
 import 'package:template/features/auth/screens/splash_screen.dart';
-import 'package:template/features/home/bindings/home_binding.dart';
+import 'package:template/features/home/bindings/chat_binding.dart';
+import 'package:template/features/home/bindings/profile_binding.dart';
 import 'package:template/features/home/screens/home_screens.dart';
+import 'package:template/features/home/screens/profile_screen.dart';
 import 'package:template/routes/routes_name.dart';
 
 class AppRoutes {
   static List<GetPage> pages = [
     GetPage(
       name: RoutesName.home,
-      page: () => HomeScreen(),
+      page: () => HomeScreens(),
       transition: Transition.rightToLeft,
-      binding: HomeBinding(),
+      binding: ChatBinding(),
     ),
     GetPage(
       name: RoutesName.login,
@@ -68,6 +70,12 @@ class AppRoutes {
       page: () => AccouontCreated(),
       transition: Transition.rightToLeft,
       // binding: AuthBinding(),
+    ),
+      GetPage(
+      name: RoutesName.profile,
+      page: () => ProfileScreen(),
+      transition: Transition.rightToLeft,
+      binding: ProfileBinding(),
     ),
   ];
 }
