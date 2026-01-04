@@ -51,6 +51,7 @@ class HomeScreens extends GetView<ChatController> {
 
             // Disclaimer
             _buildDisclaimer(),
+            SizedBox(height: 12),
           ],
         ),
       ),
@@ -130,7 +131,7 @@ class HomeScreens extends GetView<ChatController> {
       child: Text(
         'This AI assistant provides general legal information only.\nConsult a licensed attorney for legal advice.',
         textAlign: TextAlign.center,
-        style: AppTextStyles.s14w4i(fontSize: 12),
+        style: AppTextStyles.s14w4i(fontSize: 12, color: AppColors.gray),
       ),
     );
   }
@@ -162,7 +163,7 @@ class HomeScreens extends GetView<ChatController> {
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.symmetric(
                     horizontal: 20,
-                    vertical: 12,
+                    vertical: 14,
                   ),
                 ),
               ),

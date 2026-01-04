@@ -24,7 +24,7 @@ class SignInScreen extends GetView<AuthController> {
           child: Column(
             children: [
               //Header Here
-              CustomeHeader(title: AppString.signin),
+              CustomeHeader(title: AppString.signin, isMenu: false),
 
               //Logo Here
               Image.asset(AppImages.legalAiLogo, width: 132.5.w, height: 106.h),
@@ -46,7 +46,7 @@ class SignInScreen extends GetView<AuthController> {
               ),
 
               //Forgot Password
-              SizedBox(height: 8.h),
+              SizedBox(height: 12.h),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -63,7 +63,7 @@ class SignInScreen extends GetView<AuthController> {
                     onTap: () => Get.toNamed(RoutesName.forgetPassword),
                     child: Text(
                       AppString.forgotPassword,
-                      style: AppTextStyles.s14w4i(),
+                      style: AppTextStyles.s14w4i(color: AppColors.brand),
                     ),
                   ),
                 ],

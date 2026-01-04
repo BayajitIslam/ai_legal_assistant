@@ -220,6 +220,9 @@ class ProfileScreen extends GetView<ProfileController> {
         ),
         SizedBox(height: 16.h),
         _buildDisplayField(icon: AppImages.lcok, label: '••••••••••'),
+
+        SizedBox(height: 40.h),
+        _buildLogoutButton(),
       ],
     );
   }
@@ -401,6 +404,17 @@ class ProfileScreen extends GetView<ProfileController> {
       return CustomeButton(
         onTap: isLoading ? null : () => controller.updateProfile(),
         title: isLoading ? "Saving Changes..." : AppString.update,
+      );
+    });
+  }
+
+  Widget _buildLogoutButton() {
+    return Obx(() {
+      final isLoading = controller.isLoading.value;
+
+      return CustomeButton(
+        onTap: isLoading ? null : () => controller.logout(),
+        title: isLoading ? "Logging out..." : "Logout",
       );
     });
   }

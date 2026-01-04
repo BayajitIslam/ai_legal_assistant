@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:template/features/widget/custome_snackbar.dart';
 import 'package:template/routes/routes_name.dart';
 
 class OTPController extends GetxController {
@@ -86,29 +87,23 @@ class OTPController extends GetxController {
       await Future.delayed(Duration(seconds: 2));
 
       // Simulate success
-      if (otp == '123456') {
-        debugPrint(" Veryfication Type : $verificationType");
-        Get.snackbar(
-          'Success',
-          'OTP verified successfully!',
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.BOTTOM,
-        );
+      // if (otp == '123456') {
+      debugPrint(" Veryfication Type : $verificationType");
+      CustomeSnackbar.success('OTP verified successfully!');
 
-        // Navigate based on verification type
-        if (verificationType == 'signup') {
-          // Sign Up Flow: Go to Login
-          debugPrint(" Veryfication Type : $verificationType");
-          Get.offAllNamed(RoutesName.accountCreated);
-        } else if (verificationType == 'forgot_password') {
-          // Forgot Password Flow: Go to Reset Password
-          debugPrint(" Veryfication Type : $verificationType");
-          Get.offAllNamed(RoutesName.passwordReset);
-        }
-      } else {
-        errorMessage.value = 'Invalid OTP code. Please try again.';
+      // Navigate based on verification type
+      if (verificationType == 'signup') {
+        // Sign Up Flow: Go to Login
+        debugPrint(" Veryfication Type : $verificationType");
+        Get.offAllNamed(RoutesName.accountCreated);
+      } else if (verificationType == 'forgot_password') {
+        // Forgot Password Flow: Go to Reset Password
+        debugPrint(" Veryfication Type : $verificationType");
+        Get.offAllNamed(RoutesName.passwordReset);
       }
+      // } else {
+      //   errorMessage.value = 'Invalid OTP code. Please try again.';
+      // }
     } catch (e) {
       errorMessage.value = 'Verification failed. Please try again.';
     } finally {
@@ -126,17 +121,10 @@ class OTPController extends GetxController {
       //   email: email,
       //   type: verificationType,
       // );
-
       // Mock Response
       await Future.delayed(Duration(seconds: 1));
 
-      Get.snackbar(
-        'Success',
-        'OTP has been resent to your email',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      CustomeSnackbar.success('OTP has been resent to your email');
 
       // Restart timer
       startTimer();
@@ -149,13 +137,7 @@ class OTPController extends GetxController {
       // Focus on first field
       focusNodes[0].requestFocus();
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to resend OTP. Please try again.',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      CustomeSnackbar.error('Failed to resend OTP. Please try again.');
     }
   }
 

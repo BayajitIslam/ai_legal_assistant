@@ -30,4 +30,9 @@ class LocalStorageService {
   static Future<void> clearAllSessions() async {
     await _box.remove(_chatSessionsKey);
   }
+
+  // Clear All Data From Database
+  static Future<void> clearAllData() async {
+    await _box.erase();
+  }
 }

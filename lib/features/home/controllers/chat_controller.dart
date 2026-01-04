@@ -4,6 +4,7 @@
 import 'package:get/get.dart';
 import 'package:template/core/utils/services/ai_service.dart';
 import 'package:template/core/utils/services/local_storage_service.dart';
+import 'package:template/features/widget/custome_snackbar.dart';
 import 'package:uuid/uuid.dart';
 import 'package:flutter/material.dart';
 import '../models/chat_models.dart';
@@ -152,11 +153,8 @@ class ChatController extends GetxController {
       LocalStorageService.saveChatSessions(chatSessions);
     } catch (e) {
       print('Error getting AI response: $e');
-      Get.snackbar(
-        'Error',
-        'Failed to get response. Please try again.',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+
+      CustomeSnackbar.error('Failed to get response. Please try again.');
     } finally {
       isLoading.value = false;
     }
@@ -173,13 +171,10 @@ class ChatController extends GetxController {
       _sortChatSessionsByRecent();
 
       LocalStorageService.saveChatSessions(chatSessions);
-
-      Get.snackbar(
-        'Success',
-        'Chat renamed successfully',
-        snackPosition: SnackPosition.BOTTOM,
-        duration: const Duration(seconds: 2),
-      );
+      Get.back();
+      CustomeSnackbar.success('Chat renamed successfully');
+    } else {
+      print('Chat session not found');
     }
   }
 
@@ -195,12 +190,7 @@ class ChatController extends GetxController {
     }
 
     LocalStorageService.saveChatSessions(chatSessions);
-
-    Get.snackbar(
-      'Deleted',
-      'Chat deleted successfully',
-      snackPosition: SnackPosition.BOTTOM,
-      duration: const Duration(seconds: 2),
-    );
+    Get.back();
+    CustomeSnackbar.success('Chat deleted successfully');
   }
 }

@@ -26,7 +26,7 @@ class SignUpScreen extends GetView<AuthController> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 //Header
-                CustomeHeader(title: AppString.signup),
+                CustomeHeader(title: AppString.signup,isMenu: false,),
 
                 //Logo Here
                 Image.asset(

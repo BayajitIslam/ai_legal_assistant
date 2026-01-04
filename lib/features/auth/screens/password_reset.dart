@@ -24,7 +24,7 @@ class PasswordReset extends GetView<AuthController> {
           child: Column(
             children: [
               //Header Here
-              CustomeHeader(title: AppString.signin),
+              CustomeHeader(title: AppString.signin, isMenu: false),
 
               //Logo Here
               Image.asset(AppImages.legalAiLogo, width: 132.5.w, height: 106.h),
@@ -33,8 +33,8 @@ class PasswordReset extends GetView<AuthController> {
               SizedBox(height: 51.h),
               CustomeTextfield(
                 controller: controller.newPasswordController,
-                icon: SvgPicture.asset(AppImages.email, fit: BoxFit.cover),
-                hint: AppString.enterEmail,
+                icon: SvgPicture.asset(AppImages.lcok, fit: BoxFit.cover),
+                hint: AppString.enterPassword,
               ),
 
               //Confirm Password Here
@@ -42,7 +42,7 @@ class PasswordReset extends GetView<AuthController> {
               CustomeTextfield(
                 controller: controller.confirmNewPasswordController,
                 icon: SvgPicture.asset(AppImages.lcok, fit: BoxFit.cover),
-                hint: AppString.enterPassword,
+                hint: AppString.reEnterPassword,
               ),
 
               //Forgot Password
@@ -57,31 +57,14 @@ class PasswordReset extends GetView<AuthController> {
                       style: AppTextStyles.s14w4i(color: AppColors.error),
                     ),
                   ),
-
-                  //Forgot Password
-                  InkWell(
-                    onTap: () => Get.toNamed(RoutesName.forgetPassword),
-                    child: Text(
-                      AppString.forgotPassword,
-                      style: AppTextStyles.s14w4i(),
-                    ),
-                  ),
                 ],
               ),
-              //Sign In Here
+              //Update Password  Here
               SizedBox(height: 27.h),
               CustomeButton(
                 bgColor: AppColors.brand,
-                onTap: controller.signIn,
+                onTap: controller.resetPassword,
                 title: AppString.signin,
-              ),
-
-              //Sign Up Here
-              SizedBox(height: 20.h),
-              CustomeButton(
-                bgColor: AppColors.brand,
-                onTap: () => Get.toNamed(RoutesName.signUp),
-                title: AppString.signup,
               ),
             ],
           ),

@@ -14,12 +14,14 @@ class CustomeHeader extends StatelessWidget {
     this.isProfile = false,
     this.isHome = false,
     this.onTapDrawer,
+    this.isMenu = true,
   });
 
   final canGoBack = Navigator.of(Get.context!).canPop();
   final String title;
   final bool isProfile;
   final bool isHome;
+  final bool isMenu;
   final VoidCallback? onTapDrawer;
 
   @override
@@ -30,36 +32,38 @@ class CustomeHeader extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           // Left Button (Menu or Back)
-          GestureDetector(
-            onTap: () {
-              if (isHome) {
-                onTapDrawer?.call(); // ✅ FIX: Call the function with ()
-              } else if (canGoBack) {
-                Get.back();
-              }
-            },
-            child: Container(
-              width: 36.w,
-              height: 36.h,
-              decoration: BoxDecoration(
-                color: AppColors.brand,
-                shape: BoxShape.circle,
-                border: Border.all(color: const Color(0xFFFFB991)),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.brand,
-                    blurRadius: 25,
-                    blurStyle: BlurStyle.inner,
+          isMenu
+              ? GestureDetector(
+                  onTap: () {
+                    if (isHome) {
+                      onTapDrawer?.call(); // ✅ FIX: Call the function with ()
+                    } else if (canGoBack) {
+                      Get.back();
+                    }
+                  },
+                  child: Container(
+                    width: 36.w,
+                    height: 36.h,
+                    decoration: BoxDecoration(
+                      color: AppColors.brand,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: const Color(0xFFFFB991)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.brand,
+                          blurRadius: 25,
+                          blurStyle: BlurStyle.inner,
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      isHome ? Icons.menu : Icons.arrow_back,
+                      color: Colors.white,
+                      size: 18.sp,
+                    ),
                   ),
-                ],
-              ),
-              child: Icon(
-                isHome ? Icons.menu : Icons.arrow_back,
-                color: Colors.white,
-                size: 18.sp,
-              ),
-            ),
-          ),
+                )
+              : SizedBox.shrink(),
 
           // Title
           isProfile

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:template/features/auth/models/user_model.dart';
+import 'package:template/features/widget/custome_snackbar.dart';
 import 'package:template/routes/routes_name.dart';
 
 class AuthController extends GetxController {
@@ -146,13 +147,7 @@ class AuthController extends GetxController {
       await Future.delayed(Duration(seconds: 2));
 
       // Success
-      Get.snackbar(
-        'Success',
-        'Password has been reset successfully!',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      CustomeSnackbar.success('Password reset successfully!');
 
       // Clear fields
       newPasswordController.clear();

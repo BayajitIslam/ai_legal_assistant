@@ -5,6 +5,9 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
+import 'package:template/core/utils/services/local_storage_service.dart';
+import 'package:template/routes/routes_name.dart';
+
 class ProfileController extends GetxController {
   // Text controllers
   final nameController = TextEditingController();
@@ -302,6 +305,11 @@ class ProfileController extends GetxController {
     }
 
     return true;
+  }
+
+  void logout() async {
+    await LocalStorageService.clearAllData();
+    Get.offAllNamed(RoutesName.login);
   }
 
   /// Toggle password visibility
