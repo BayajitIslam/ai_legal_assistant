@@ -321,57 +321,130 @@ class AuthController extends GetxController {
   }
 
   // Reset Password
+
   Future<void> resetPassword() async {
     errorMessageResetPassword.value = '';
 
     // Validation
+    if (!_validateResetPasswordForm()) return;
+
+    try {
+      isLoading.value = true;
+
+      // Get arguments safely
+      final arguments = Get.arguments as Map<String, dynamic>?;
+      final email = arguments?['email'];
+      final resetToken = arguments?['reset_token'];
+
+      // Validate arguments exist
+      if (email == null || resetToken == null) {
+        errorMessageResetPassword.value =
+            'Invalid reset session. Please try again.';
+        CustomeSnackbar.error(errorMessageResetPassword.value);
+        return;
+      }
+
+      Console.info('Resetting password for: $email');
+
+      // Call API
+      final response = await ApiService.post(
+        ApiEndpoints.resetPasswordConfirm,
+        body: {
+          'email': email,
+          'reset_token': resetToken,
+          'new_password': newPasswordController.text,
+          'confirm_password': confirmNewPasswordController.text,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        //  Success
+        _handleResetSuccess(response.data);
+      } else {
+        //  Error (400, 401, etc.)
+        _handleResetError(response.data);
+      }
+    } catch (e) {
+      Console.error('Exception during password reset: $e');
+      errorMessageResetPassword.value = 'Connection failed. Please try again.';
+      CustomeSnackbar.error(errorMessageResetPassword.value);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  //  Handle successful password reset
+  void _handleResetSuccess(Map<String, dynamic> data) {
+    CustomeSnackbar.success(data['message'] ?? 'Password reset successfully!');
+    Console.info('Password reset success: $data');
+
+    // Clear fields
+    newPasswordController.clear();
+    confirmNewPasswordController.clear();
+
+    // Navigate to login
+    Get.offAllNamed(RoutesName.login);
+  }
+
+  //  Handle password reset errors
+  void _handleResetError(Map<String, dynamic> data) {
+    Console.error('Password reset error: $data');
+
+    String errorMessage = '';
+
+    // Check if errors exist
+    if (data['errors'] != null && data['errors'] is Map<String, dynamic>) {
+      final errors = data['errors'] as Map<String, dynamic>;
+
+      // Extract first error message from any field
+      for (var messages in errors.values) {
+        if (messages is List && messages.isNotEmpty) {
+          errorMessage = messages.first.toString();
+          break;
+        } else if (messages is String) {
+          errorMessage = messages;
+          break;
+        }
+      }
+    }
+
+    // Fallback to message if no error extracted
+    if (errorMessage.isEmpty) {
+      errorMessage = data['message'] ?? 'Password reset failed';
+    }
+
+    // Set error and show snackbar
+    errorMessageResetPassword.value = errorMessage;
+    CustomeSnackbar.error(errorMessage);
+  }
+
+  //  Validate reset password form
+  bool _validateResetPasswordForm() {
     if (newPasswordController.text.isEmpty) {
       errorMessageResetPassword.value = 'Please enter your new password';
-      return;
+      CustomeSnackbar.error(errorMessageResetPassword.value);
+      return false;
     }
 
     if (newPasswordController.text.length < 6) {
       errorMessageResetPassword.value =
           'Password must be at least 6 characters';
-      return;
+      CustomeSnackbar.error(errorMessageResetPassword.value);
+      return false;
     }
 
     if (confirmNewPasswordController.text.isEmpty) {
       errorMessageResetPassword.value = 'Please confirm your password';
-      return;
+      CustomeSnackbar.error(errorMessageResetPassword.value);
+      return false;
     }
 
     if (newPasswordController.text != confirmNewPasswordController.text) {
       errorMessageResetPassword.value = 'Passwords do not match';
-      return;
+      CustomeSnackbar.error(errorMessageResetPassword.value);
+      return false;
     }
 
-    try {
-      isLoading.value = true;
-
-      // API Call (Replace with your actual API)
-      // final response = await ApiService.resetPassword(
-      //   password: newPasswordController.text,
-      // );
-
-      // Mock Response
-      await Future.delayed(Duration(seconds: 2));
-
-      // Success
-      CustomeSnackbar.success('Password reset successfully!');
-
-      // Clear fields
-      newPasswordController.clear();
-      confirmNewPasswordController.clear();
-
-      // Navigate to login
-      await Future.delayed(Duration(seconds: 1));
-      Get.offAllNamed(RoutesName.login);
-    } catch (e) {
-      errorMessageResetPassword.value =
-          'Failed to reset password. Please try again.';
-    } finally {
-      isLoading.value = false;
-    }
+    return true;
   }
 }
