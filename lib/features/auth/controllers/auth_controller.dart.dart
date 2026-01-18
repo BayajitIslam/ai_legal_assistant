@@ -177,6 +177,7 @@ class AuthController extends GetxController {
         Console.error('Unexpected Error: ${response.data}');
       }
     } catch (e) {
+      isLoading(false);
       Console.error('Exception during login: $e');
       errorMessageSignIn.value = 'Connection failed. Please try again.';
       CustomeSnackbar.error('Connection failed. Please try again.');
@@ -186,7 +187,7 @@ class AuthController extends GetxController {
   }
 
   //resetPassword
-  void sendPasswordResetEmail() {
+  void sendPasswordResetEmail() async {
     errorMessageForgotPassword.value = '';
 
     // Validation
@@ -199,8 +200,82 @@ class AuthController extends GetxController {
       errorMessageForgotPassword.value = 'Please enter a valid email';
       return;
     }
+    try {
+      isLoading.value = true;
 
-    Get.toNamed(RoutesName.forgetPasswordotpScreen);
+      // API Call
+      final response = await ApiService.post(
+        ApiEndpoints.resetPasswordRequest,
+        body: {
+          "email": forgotPasswordEmailController.text.toLowerCase().trim(),
+        },
+      );
+      isLoading(false);
+      if (response.statusCode == 200) {
+        //  Success
+        CustomeSnackbar.success(response.data['message']);
+        Console.info('Password Reset Request Success: ${response.data}');
+        Get.toNamed(
+          RoutesName.forgetPasswordotpScreen,
+          arguments: {
+            'email': forgotPasswordEmailController.text.toLowerCase().trim(),
+            'otp_type': 'reset',
+          },
+        );
+      } else if (response.statusCode == 400 ||
+          response.statusCode == 401 ||
+          response.statusCode == 403) {
+        //  Error - Bad Request / Unauthorized / Forbidden
+
+        if (response.data != null && !response.data['success']) {
+          // Check if errors exist and handle accordingly
+          final errors = response.data['errors'];
+
+          if (errors != null) {
+            // Handle detail array format (like your 401 error)
+            if (errors['detail'] != null && errors['detail'] is List) {
+              final detailErrors = errors['detail'] as List;
+              if (detailErrors.isNotEmpty) {
+                errorMessageForgotPassword.value = detailErrors.first
+                    .toString();
+              }
+            }
+            // Handle field-specific errors (Map format)
+            else if (errors is Map<String, dynamic>) {
+              String errorMessage = '';
+              errors.forEach((field, messages) {
+                if (messages is List && messages.isNotEmpty) {
+                  errorMessage = messages.first.toString();
+                } else if (messages is String) {
+                  errorMessage = messages;
+                }
+              });
+              if (errorMessage.isNotEmpty) {
+                errorMessageForgotPassword.value = errorMessage;
+              }
+            }
+          } else {
+            // Fallback to message if no errors
+            errorMessageForgotPassword.value =
+                response.data['message'] ?? 'Login failed';
+          }
+        } else {
+          errorMessageForgotPassword.value = 'Authentication failed';
+        }
+
+        Console.error('Login Error ${response.statusCode}: ${response.data}');
+      } else {
+        //  Other errors
+        final message = response.data?['message'] ?? 'Something went wrong';
+        errorMessageForgotPassword.value = message;
+        Console.error('Unexpected Error: ${response.data}');
+      }
+    } catch (e) {
+      isLoading(false);
+      errorMessageForgotPassword.value = 'Connection failed. Please try again.';
+    } finally {
+      isLoading(false);
+    }
   }
 
   // Validate Sign In Form

@@ -60,9 +60,11 @@ class OTPController extends GetxController {
   }
 
   // Verify OTP
+
   Future<void> verifyOTP() async {
     errorMessage.value = '';
 
+    // Get OTP code
     String otp = getOTPCode();
 
     // Validation
@@ -74,43 +76,97 @@ class OTPController extends GetxController {
     try {
       isLoading.value = true;
 
+      final email = Get.arguments['email'] ?? '';
+      final otpType = Get.arguments['otp_type'];
+
+      // Determine API endpoint
+      final apiEndpoint = (otpType == 'registration')
+          ? ApiEndpoints.verifyOTP
+          : ApiEndpoints.verifyResetOTP;
+
+      // Prepare request body
+      final Map<String, dynamic> requestBody = {
+        "email": email,
+        "otp_code": otp,
+      };
+
+      // Add otp_type only if it exists
+      if (otpType != null) {
+        requestBody["otp_type"] = otpType;
+      }
+
+      Console.info('Verifying OTP: $requestBody');
+
       // API Call
-      final response = await ApiService.post(
-        ApiEndpoints.verifyOTP,
-        body: {
-          "email": Get.arguments['email'],
-          "otp_type": Get.arguments['otp_type'],
-          "otp_code": otpControllers
-              .map((controller) => controller.text)
-              .join(),
-        },
-      );
+      final response = await ApiService.post(apiEndpoint, body: requestBody);
 
       if (response.statusCode == 200) {
-        isLoading(false);
+        // Success
         CustomeSnackbar.success(response.data['message']);
-        Console.info('${response.data}');
-        Get.toNamed(RoutesName.accountCreated);
-      } else if (response.statusCode == 400) {
-        isLoading(false);
-        if (!response.data['success']) {
-          final errors = response.data['errors'] as Map<String, dynamic>;
+        Console.info('OTP Verified: ${response.data}');
 
-          errors.forEach((field, messages) {
-            for (var msg in messages) {
-              errorMessage.value = msg;
-              Console.error('$field: $msg');
-            }
-          });
+        // Navigate to next screen
+        if (otpType == 'registration') {
+          Get.toNamed(RoutesName.accountCreated);
+        } else {
+          Get.toNamed(
+            RoutesName.passwordReset,
+            arguments: {
+              'reset_token': response.data['data']['reset_token'],
+              'email': response.data['data']['email'],
+            },
+          );
         }
+      } else if (response.statusCode == 400) {
+        //  Validation Error
+        _handleValidationError(response.data);
       } else {
-        isLoading(false);
+        //  Other Error
         errorMessage.value = response.data['message'] ?? 'Verification failed.';
+        CustomeSnackbar.error(errorMessage.value);
+        Console.error('Verification Error: ${response.data}');
       }
     } catch (e) {
+      // Exception
+      Console.error('Exception during OTP verification: $e');
       errorMessage.value = 'Verification failed. Please try again.';
+      CustomeSnackbar.error(errorMessage.value);
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  //  Handle validation errors
+  void _handleValidationError(Map<String, dynamic> data) {
+    if (!data['success'] && data['errors'] != null) {
+      final errors = data['errors'];
+
+      String errorMsg = '';
+
+      if (errors is Map<String, dynamic>) {
+        // Extract first error message
+        for (var messages in errors.values) {
+          if (messages is List && messages.isNotEmpty) {
+            errorMsg = messages.first.toString();
+            break;
+          } else if (messages is String) {
+            errorMsg = messages;
+            break;
+          }
+        }
+      }
+
+      if (errorMsg.isNotEmpty) {
+        errorMessage.value = errorMsg;
+        CustomeSnackbar.error(errorMsg);
+        Console.error('Validation Error: $errorMsg');
+      } else {
+        errorMessage.value = 'Invalid OTP code';
+        CustomeSnackbar.error('Invalid OTP code');
+      }
+    } else {
+      errorMessage.value = data['message'] ?? 'Verification failed';
+      CustomeSnackbar.error(errorMessage.value);
     }
   }
 
