@@ -18,14 +18,7 @@ class OtpScreen extends GetView<AuthController> {
 
   @override
   Widget build(BuildContext context) {
-    final otpController = Get.put(
-      OTPController(
-        verificationType: verificationType,
-        email: verificationType == "forgot_password"
-            ? controller.forgotPasswordEmailController.text
-            : controller.emailController.text,
-      ),
-    );
+    final otpController = Get.find<OTPController>();
     return Scaffold(
       body: Center(
         child: Padding(

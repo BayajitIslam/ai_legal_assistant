@@ -55,7 +55,7 @@ class AppRoutes {
     ),
     GetPage(
       name: RoutesName.signUpotpScreen,
-      page: () => OtpScreen(verificationType: "signup"),
+      page: () => OtpScreen(verificationType: "registration"),
       transition: Transition.rightToLeft,
       bindings: [AuthBinding(), OtpBindingSignUp()],
     ),
@@ -71,7 +71,7 @@ class AppRoutes {
       transition: Transition.rightToLeft,
       // binding: AuthBinding(),
     ),
-      GetPage(
+    GetPage(
       name: RoutesName.profile,
       page: () => ProfileScreen(),
       transition: Transition.rightToLeft,

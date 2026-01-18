@@ -5,7 +5,7 @@ class OtpBindingForgetPassword extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut(
-      () => OTPController(verificationType: "forgot_password"),
+      () => OTPController(),
       fenix: true,
     );
   }
@@ -14,6 +14,9 @@ class OtpBindingForgetPassword extends Bindings {
 class OtpBindingSignUp extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => OTPController(verificationType: "signup"), fenix: true);
+    Get.lazyPut(
+      () => OTPController(),
+      fenix: true,
+    );
   }
 }

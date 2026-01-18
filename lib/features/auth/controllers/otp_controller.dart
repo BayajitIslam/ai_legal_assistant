@@ -1,15 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:template/core/constants/api_endpoints.dart';
+import 'package:template/core/services/api_service.dart';
+import 'package:template/core/utils/console.dart';
 import 'package:template/features/widget/custome_snackbar.dart';
 import 'package:template/routes/routes_name.dart';
 
 class OTPController extends GetxController {
-  final String verificationType; // 'signup' or 'forgot_password'
-  final String? email;
-
-  OTPController({required this.verificationType, this.email});
-
   // OTP Controllers for each box
   final List<TextEditingController> otpControllers = List.generate(
     6,
@@ -76,34 +74,39 @@ class OTPController extends GetxController {
     try {
       isLoading.value = true;
 
-      // API Call (Replace with your actual API)
-      // final response = await ApiService.verifyOTP(
-      //   otp: otp,
-      //   email: email,
-      //   type: verificationType,
-      // );
+      // API Call
+      final response = await ApiService.post(
+        ApiEndpoints.verifyOTP,
+        body: {
+          "email": Get.arguments['email'],
+          "otp_type": Get.arguments['otp_type'],
+          "otp_code": otpControllers
+              .map((controller) => controller.text)
+              .join(),
+        },
+      );
 
-      // Mock Response
-      await Future.delayed(Duration(seconds: 2));
+      if (response.statusCode == 200) {
+        isLoading(false);
+        CustomeSnackbar.success(response.data['message']);
+        Console.info('${response.data}');
+        Get.toNamed(RoutesName.accountCreated);
+      } else if (response.statusCode == 400) {
+        isLoading(false);
+        if (!response.data['success']) {
+          final errors = response.data['errors'] as Map<String, dynamic>;
 
-      // Simulate success
-      // if (otp == '123456') {
-      debugPrint(" Veryfication Type : $verificationType");
-      CustomeSnackbar.success('OTP verified successfully!');
-
-      // Navigate based on verification type
-      if (verificationType == 'signup') {
-        // Sign Up Flow: Go to Login
-        debugPrint(" Veryfication Type : $verificationType");
-        Get.offAllNamed(RoutesName.accountCreated);
-      } else if (verificationType == 'forgot_password') {
-        // Forgot Password Flow: Go to Reset Password
-        debugPrint(" Veryfication Type : $verificationType");
-        Get.offAllNamed(RoutesName.passwordReset);
+          errors.forEach((field, messages) {
+            for (var msg in messages) {
+              errorMessage.value = msg;
+              Console.error('$field: $msg');
+            }
+          });
+        }
+      } else {
+        isLoading(false);
+        errorMessage.value = response.data['message'] ?? 'Verification failed.';
       }
-      // } else {
-      //   errorMessage.value = 'Invalid OTP code. Please try again.';
-      // }
     } catch (e) {
       errorMessage.value = 'Verification failed. Please try again.';
     } finally {

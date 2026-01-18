@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:template/core/constants/api_endpoints.dart';
+import 'package:template/core/services/api_service.dart';
+import 'package:template/core/utils/console.dart';
 import 'package:template/features/auth/models/user_model.dart';
 import 'package:template/features/widget/custome_snackbar.dart';
 import 'package:template/routes/routes_name.dart';
@@ -36,12 +39,61 @@ class AuthController extends GetxController {
   final RxBool isLoading = false.obs;
 
   //Sign Up ---
-  void signUp() {
+  void signUp() async {
     //Sign Up Logic Here
     if (!_validateSignUpForm()) return;
     errorMessageSignUp.value = "";
 
-    Get.toNamed(RoutesName.signUpotpScreen);
+    try {
+      isLoading(true);
+
+      //call api
+      final response = await ApiService.post(
+        ApiEndpoints.signup,
+        body: {
+          "full_name": nameController.text,
+          "email": emailController.text.toLowerCase(),
+          "mobile_number": phoneController.text,
+          "password": passwordController.text,
+          "re_type_password": confirmPasswordController.text,
+        },
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        isLoading(false);
+        CustomeSnackbar.success(response.data['message']);
+        Console.info('${response.data}');
+        Get.toNamed(
+          RoutesName.signUpotpScreen,
+          arguments: {
+            'email': emailController.text,
+            'otp_type': 'registration',
+          },
+        );
+      } else if (response.statusCode == 400) {
+        isLoading(false);
+        Console.info('${response.data}');
+        if (!response.data['success']) {
+          final errors = response.data['errors'] as Map<String, dynamic>;
+
+          errors.forEach((field, messages) {
+            for (var msg in messages) {
+              errorMessageSignUp.value = msg;
+              Console.error('$field: $msg');
+            }
+          });
+        }
+      } else {
+        isLoading(false);
+        CustomeSnackbar.error(response.data['message']);
+        Console.info('${response.data}');
+      }
+    } catch (e) {
+      isLoading(false);
+      CustomeSnackbar.error('Error: $e');
+      Console.error('Error: $e');
+    } finally {
+      isLoading(false);
+    }
   }
 
   //Sign In ---

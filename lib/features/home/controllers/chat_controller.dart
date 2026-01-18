@@ -1,9 +1,4 @@
-// lib/controllers/chat_controller.dart
-// COMPLETE FILE with sorting functionality
-
 import 'package:get/get.dart';
-import 'package:template/core/utils/services/ai_service.dart';
-import 'package:template/core/utils/services/local_storage_service.dart';
 import 'package:template/features/widget/custome_snackbar.dart';
 import 'package:uuid/uuid.dart';
 import 'package:flutter/material.dart';
@@ -22,16 +17,7 @@ class ChatController extends GetxController {
     _loadData();
   }
 
-  void _loadData() {
-    final savedSessions = LocalStorageService.loadChatSessions();
-    chatSessions.value = savedSessions;
-
-    if (savedSessions.isNotEmpty) {
-      // Sort by most recent first
-      _sortChatSessionsByRecent();
-      currentSession.value = savedSessions.first;
-    }
-  }
+  void _loadData() {}
 
   /// ✅ Sort chat sessions by most recent message/update (newest first)
   void _sortChatSessionsByRecent() {
@@ -66,8 +52,6 @@ class ChatController extends GetxController {
     chatSessions.insert(0, newSession); // Insert at top
     currentSession.value = newSession;
 
-    LocalStorageService.saveChatSessions(chatSessions);
-
     // Close drawer if open
     if (Get.context != null) {
       final scaffoldState = Scaffold.maybeOf(Get.context!);
@@ -86,8 +70,6 @@ class ChatController extends GetxController {
 
     // Re-sort to move selected chat to top
     _sortChatSessionsByRecent();
-
-    LocalStorageService.saveChatSessions(chatSessions);
 
     // Close drawer
     if (Get.context != null) {
@@ -121,7 +103,6 @@ class ChatController extends GetxController {
     currentSession.refresh();
 
     // Save immediately
-    LocalStorageService.saveChatSessions(chatSessions);
 
     isLoading.value = true;
 
@@ -130,18 +111,8 @@ class ChatController extends GetxController {
       await Future.delayed(const Duration(milliseconds: 500));
 
       // Get AI response
-      final aiResponse = await AIService.getResponse(message);
-
-      // Create AI message
-      final aiMessage = MessageModel(
-        id: _uuid.v4(),
-        content: aiResponse,
-        isUser: false,
-        timestamp: DateTime.now(),
-      );
 
       // Add AI message
-      currentSession.value!.messages.add(aiMessage);
       currentSession.value!.updatedAt =
           DateTime.now(); // Update timestamp again
       currentSession.refresh();
@@ -150,7 +121,6 @@ class ChatController extends GetxController {
       _sortChatSessionsByRecent();
 
       // Save to storage
-      LocalStorageService.saveChatSessions(chatSessions);
     } catch (e) {
       print('Error getting AI response: $e');
 
@@ -170,7 +140,6 @@ class ChatController extends GetxController {
       // Sort after rename
       _sortChatSessionsByRecent();
 
-      LocalStorageService.saveChatSessions(chatSessions);
       Get.back();
       CustomeSnackbar.success('Chat renamed successfully');
     } else {
@@ -189,7 +158,6 @@ class ChatController extends GetxController {
           : null;
     }
 
-    LocalStorageService.saveChatSessions(chatSessions);
     Get.back();
     CustomeSnackbar.success('Chat deleted successfully');
   }

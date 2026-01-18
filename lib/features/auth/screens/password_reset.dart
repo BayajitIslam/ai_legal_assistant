@@ -10,7 +10,6 @@ import 'package:template/features/auth/controllers/auth_controller.dart.dart';
 import 'package:template/features/auth/widgets/custome_textfield.dart';
 import 'package:template/features/widget/custom_button.dart';
 import 'package:template/features/widget/custome_header.dart';
-import 'package:template/routes/routes_name.dart';
 
 class PasswordReset extends GetView<AuthController> {
   const PasswordReset({super.key});

@@ -3,9 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:template/core/services/local%20storage/storage_service.dart';
 import 'dart:io';
-
-import 'package:template/core/utils/services/local_storage_service.dart';
 import 'package:template/routes/routes_name.dart';
 
 class ProfileController extends GetxController {
@@ -308,7 +307,7 @@ class ProfileController extends GetxController {
   }
 
   void logout() async {
-    await LocalStorageService.clearAllData();
+    await StorageService.clearAll();
     Get.offAllNamed(RoutesName.login);
   }
 
