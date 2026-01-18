@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:template/core/constants/api_endpoints.dart';
 import 'package:template/core/services/api_service.dart';
+import 'package:template/core/services/local%20storage/storage_service.dart';
 import 'package:template/core/utils/console.dart';
-import 'package:template/features/auth/models/user_model.dart';
 import 'package:template/features/widget/custome_snackbar.dart';
 import 'package:template/routes/routes_name.dart';
 
@@ -96,13 +95,94 @@ class AuthController extends GetxController {
     }
   }
 
-  //Sign In ---
-  void signIn() {
-    //Sign In Logic Here
+  // Fixed signIn method
+
+  void signIn() async {
+    // Validate form
     if (!_validateSignInForm()) return;
     errorMessageSignIn.value = "";
 
-    Get.toNamed(RoutesName.home);
+    final data = {
+      "email": loginEmailController.text.toLowerCase().trim(),
+      "password": loginPasswordController.text,
+    };
+
+    try {
+      isLoading(true);
+
+      final response = await ApiService.post(ApiEndpoints.signin, body: data);
+
+      if (response.statusCode == 200) {
+        //  Success - Login successful
+        CustomeSnackbar.success(response.data['message']);
+        Console.info('Login Success: ${response.data}');
+
+        // Save user data to shared preferences
+        final userData = response.data['data'];
+
+        StorageService.setAccessToken(userData['tokens']['access']);
+        StorageService.setRefreshToken(userData['tokens']['refresh']);
+        StorageService.setUserName(userData['user']['full_name']);
+        StorageService.setUserEmail(userData['user']['email']);
+        StorageService.setUserId(userData['user']['id'].toString());
+        StorageService.setIsLoggedIn(true);
+
+        // Navigate to Home Screen
+        Get.offNamed(RoutesName.home);
+      } else if (response.statusCode == 400 ||
+          response.statusCode == 401 ||
+          response.statusCode == 403) {
+        //  Error - Bad Request / Unauthorized / Forbidden
+
+        if (response.data != null && !response.data['success']) {
+          // Check if errors exist and handle accordingly
+          final errors = response.data['errors'];
+
+          if (errors != null) {
+            // Handle detail array format (like your 401 error)
+            if (errors['detail'] != null && errors['detail'] is List) {
+              final detailErrors = errors['detail'] as List;
+              if (detailErrors.isNotEmpty) {
+                errorMessageSignIn.value = detailErrors.first.toString();
+              }
+            }
+            // Handle field-specific errors (Map format)
+            else if (errors is Map<String, dynamic>) {
+              String errorMessage = '';
+              errors.forEach((field, messages) {
+                if (messages is List && messages.isNotEmpty) {
+                  errorMessage = messages.first.toString();
+                } else if (messages is String) {
+                  errorMessage = messages;
+                }
+              });
+              if (errorMessage.isNotEmpty) {
+                errorMessageSignIn.value = errorMessage;
+              }
+            }
+          } else {
+            // Fallback to message if no errors
+            errorMessageSignIn.value =
+                response.data['message'] ?? 'Login failed';
+          }
+        } else {
+          errorMessageSignIn.value = 'Authentication failed';
+        }
+
+        Console.error('Login Error ${response.statusCode}: ${response.data}');
+      } else {
+        //  Other errors
+        final message = response.data?['message'] ?? 'Something went wrong';
+        errorMessageSignIn.value = message;
+        Console.error('Unexpected Error: ${response.data}');
+      }
+    } catch (e) {
+      Console.error('Exception during login: $e');
+      errorMessageSignIn.value = 'Connection failed. Please try again.';
+      CustomeSnackbar.error('Connection failed. Please try again.');
+    } finally {
+      isLoading(false);
+    }
   }
 
   //resetPassword
@@ -135,6 +215,10 @@ class AuthController extends GetxController {
     }
     if (loginPasswordController.text.isEmpty) {
       errorMessageSignIn.value = 'Please enter your password';
+      return false;
+    }
+    if (loginPasswordController.text.length < 6) {
+      errorMessageSignIn.value = 'Minimum 6 characters required';
       return false;
     }
     return true;
@@ -214,16 +298,5 @@ class AuthController extends GetxController {
     } finally {
       isLoading.value = false;
     }
-  }
-
-  // Save User Data to SharedPreferences
-  // ignore: unused_element
-  Future<void> _saveUserData(UserModel user) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('user_id', user.id ?? '');
-    await prefs.setString('user_name', user.name);
-    await prefs.setString('user_email', user.email);
-    await prefs.setString('auth_token', user.token ?? '');
-    await prefs.setBool('is_logged_in', true);
   }
 }
