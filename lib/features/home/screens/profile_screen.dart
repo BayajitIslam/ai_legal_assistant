@@ -59,13 +59,11 @@ class ProfileScreen extends GetView<ProfileController> {
 
                     SizedBox(height: 4.h),
 
-                    // Email
+                    // Email - Always shows actual user email
                     Obx(
                       () => Text(
-                        controller.isEditMode.value
-                            ? controller.emailController.text.isEmpty
-                                  ? 'your@email.com'
-                                  : controller.emailController.text
+                        controller.userEmail.value.isEmpty
+                            ? 'your@email.com'
                             : controller.userEmail.value,
                         style: AppTextStyles.s16w4p(
                           fontSize: 12.sp,
@@ -218,8 +216,6 @@ class ProfileScreen extends GetView<ProfileController> {
           icon: AppImages.phone,
           label: controller.userPhone.value,
         ),
-        SizedBox(height: 16.h),
-        _buildDisplayField(icon: AppImages.lcok, label: '••••••••••'),
 
         SizedBox(height: 40.h),
         _buildLogoutButton(),
@@ -275,11 +271,9 @@ class ProfileScreen extends GetView<ProfileController> {
           hint: 'Full Name',
         ),
         SizedBox(height: 16.h),
-        _buildEditableField(
+        _buildDisplayField(
           icon: AppImages.email,
-          controller: controller.emailController,
-          hint: 'Email Address',
-          keyboardType: TextInputType.emailAddress,
+          label: controller.userEmail.value,
         ),
         SizedBox(height: 16.h),
         _buildEditableField(
@@ -288,8 +282,6 @@ class ProfileScreen extends GetView<ProfileController> {
           hint: 'Phone Number',
           keyboardType: TextInputType.phone,
         ),
-        SizedBox(height: 16.h),
-        _buildPasswordField(),
       ],
     );
   }
@@ -333,62 +325,6 @@ class ProfileScreen extends GetView<ProfileController> {
                   color: Colors.grey[400],
                 ),
                 border: InputBorder.none,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPasswordField() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: AppColors.brand.withOpacity(0.5)),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.brand.withOpacity(0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          SvgPicture.asset(AppImages.lcok),
-          SizedBox(width: 12.w),
-          Expanded(
-            child: Obx(
-              () => TextField(
-                controller: controller.passwordController,
-                obscureText: !controller.showPassword.value,
-                style: AppTextStyles.s14w4i(
-                  fontSize: 14.sp,
-                  color: Colors.grey[800],
-                ),
-                decoration: InputDecoration(
-                  hintText: 'Enter password to confirm', // ✅ Updated hint
-                  hintStyle: AppTextStyles.s14w4i(
-                    fontSize: 14.sp,
-                    color: Colors.grey[400],
-                  ),
-                  border: InputBorder.none,
-                ),
-              ),
-            ),
-          ),
-          Obx(
-            () => GestureDetector(
-              onTap: () => controller.togglePasswordVisibility(),
-              child: Icon(
-                controller.showPassword.value
-                    ? Icons.visibility
-                    : Icons.visibility_off,
-                color: Colors.grey[400],
-                size: 20.sp,
               ),
             ),
           ),

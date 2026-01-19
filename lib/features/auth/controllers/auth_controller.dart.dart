@@ -124,6 +124,8 @@ class AuthController extends GetxController {
         StorageService.setRefreshToken(userData['tokens']['refresh']);
         StorageService.setUserName(userData['user']['full_name']);
         StorageService.setUserEmail(userData['user']['email']);
+        StorageService.setUserPhone(userData['user']['mobile_number']);
+        // StorageService.setProfileImageUrl(userData['user']['profile_picture']);
         StorageService.setUserId(userData['user']['id'].toString());
         StorageService.setIsLoggedIn(true);
 

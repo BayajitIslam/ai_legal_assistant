@@ -30,7 +30,9 @@ class StorageService {
   // User Info Keys
   static const String keyUserName = 'userName';
   static const String keyUserEmail = 'userEmail';
+  static const String keyUserPhone = 'userPhone';
   static const String keyUserId = 'userId';
+  static const String keyProfileImageUrl = 'profileImageUrl';
 
   // Auth Keys
   static const String keyAccessToken = 'access_token';
@@ -127,6 +129,15 @@ class StorageService {
   // ═══════════════════════════════════════════════════════════════════════
   // User Info Methods
   // ═══════════════════════════════════════════════════════════════════════
+  /// Save profile image URL
+  static Future<void> setProfileImageUrl(String url) async {
+    await _prefs?.setString(keyProfileImageUrl, url);
+  }
+
+  /// Get profile image URL
+  static Future<String?> getProfileImageUrl() async {
+    return _prefs?.getString(keyProfileImageUrl);
+  }
 
   static Future<void> setUserName(String value) async =>
       await setString(keyUserName, value);
@@ -135,6 +146,11 @@ class StorageService {
 
   static Future<void> setUserEmail(String value) async =>
       await setString(keyUserEmail, value);
+
+  static Future<void> setUserPhone(String value) async =>
+      await setString(keyUserPhone, value);
+
+  static Future<String> getUserPhone() async => await getString(keyUserPhone);
 
   static Future<String> getUserEmail() async => await getString(keyUserEmail);
 

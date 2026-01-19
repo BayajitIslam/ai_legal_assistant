@@ -1,74 +1,130 @@
-// lib/controllers/profile_controller.dart
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:template/core/constants/api_endpoints.dart';
+import 'package:template/core/services/api_service.dart';
 import 'package:template/core/services/local%20storage/storage_service.dart';
-import 'dart:io';
+import 'package:template/core/utils/console.dart';
+import 'package:template/features/widget/custome_snackbar.dart';
 import 'package:template/routes/routes_name.dart';
+import 'dart:io';
 
 class ProfileController extends GetxController {
-  // Text controllers
   final nameController = TextEditingController();
-  final emailController = TextEditingController();
   final phoneController = TextEditingController();
-  final passwordController =
-      TextEditingController(); // Password for verification only
 
-  // Observable values
   final RxString profileImagePath = ''.obs;
+  final RxString profileImageUrl = ''.obs;
   final RxBool isLoading = false.obs;
-  final RxBool showPassword = false.obs;
   final RxBool isEditMode = false.obs;
 
-  // User data (for display mode)
-  final RxString userName = 'Kurt Cobain'.obs;
-  final RxString userEmail = 'Kurtcobain@gmail.com'.obs;
-  final RxString userPhone = '+88 01673723672632712'.obs;
-  final RxString userPassword =
-      'password123'.obs; // Stored password for verification
+  final RxString userName = ''.obs;
+  final RxString userEmail = ''.obs;
+  final RxString userPhone = ''.obs;
 
-  // Image picker
   final ImagePicker _picker = ImagePicker();
 
   @override
   void onInit() {
     super.onInit();
-    _loadUserData();
+    fetchProfile();
   }
 
   @override
   void onClose() {
     nameController.dispose();
-    emailController.dispose();
     phoneController.dispose();
-    passwordController.dispose();
     super.onClose();
   }
 
-  /// Load user data from storage
-  void _loadUserData() {
-    // TODO: Load from GetStorage/API when backend ready
-    userName.value = 'Kurt Cobain';
-    userEmail.value = 'Kurtcobain@gmail.com';
-    userPhone.value = '+88 01673723672632712';
-    userPassword.value = 'password123'; // In production, this should be hashed
+  /// Fetch user profile from API
+  Future<void> fetchProfile() async {
+    try {
+      isLoading.value = true;
+
+      Console.info('Fetching user profile...');
+
+      final response = await ApiService.getAuth(ApiEndpoints.profile);
+
+      if (response.success && response.data != null) {
+        Console.success('Profile fetched successfully');
+        Console.info('Full response: ${response.data}');
+        _loadProfileData(response.data);
+      } else {
+        Console.error('Failed to fetch profile: ${response.message}');
+        CustomeSnackbar.error('Failed to load profile');
+      }
+    } catch (e) {
+      Console.error('Error fetching profile: $e');
+      CustomeSnackbar.error('Failed to load profile');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Load profile data from API response
+  void _loadProfileData(Map<String, dynamic> data) {
+    Console.info('Parsing profile data...');
+
+    // Handle different response structures
+    Map<String, dynamic>? user;
+
+    if (data['data'] != null && data['data']['user'] != null) {
+      user = data['data']['user'];
+    } else if (data['user'] != null) {
+      user = data['user'];
+    } else {
+      Console.error('Invalid response structure');
+      return;
+    }
+
+    Console.info('User data: $user');
+
+    // Load basic info
+    userName.value = user!['full_name'] ?? '';
+    userEmail.value = user['email'] ?? '';
+    userPhone.value = user['mobile_number'] ?? '';
+
+    // Load profile picture with detailed logging
+    final profilePicture = user['profile_picture'];
+    Console.info('Profile picture raw value: $profilePicture');
+    Console.info('Profile picture type: ${profilePicture.runtimeType}');
+
+    if (profilePicture != null && profilePicture.toString().isNotEmpty) {
+      String imageUrl = profilePicture.toString();
+
+      // Handle relative URLs
+      if (!imageUrl.startsWith('http')) {
+        Console.info('Relative URL detected, adding base URL');
+        imageUrl = 'https://harryapi.dsrt321.online$imageUrl';
+      }
+
+      profileImageUrl.value = imageUrl;
+      Console.success('Profile image URL set: $imageUrl');
+    } else {
+      profileImageUrl.value = '';
+      Console.info('No profile picture in response');
+    }
+
+    // Log final values
+    Console.info('═══════════════════════════════════');
+    Console.info('Profile Data Loaded:');
+    Console.info('  Name: ${userName.value}');
+    Console.info('  Email: ${userEmail.value}');
+    Console.info('  Phone: ${userPhone.value}');
+    Console.info('  Image URL: ${profileImageUrl.value}');
+    Console.info('═══════════════════════════════════');
   }
 
   /// Toggle edit mode
   void toggleEditMode() {
     if (isEditMode.value) {
-      // Cancel edit - reset fields
       nameController.clear();
-      emailController.clear();
       phoneController.clear();
-      passwordController.clear();
+      profileImagePath.value = '';
     } else {
-      // Enter edit mode - populate fields
       nameController.text = userName.value;
-      emailController.text = userEmail.value;
       phoneController.text = userPhone.value;
-      passwordController.clear(); // Password always empty
     }
     isEditMode.value = !isEditMode.value;
   }
@@ -85,26 +141,12 @@ class ProfileController extends GetxController {
 
       if (image != null) {
         profileImagePath.value = image.path;
-        print('✅ Image picked: ${image.path}');
-
-        Get.snackbar(
-          'Success',
-          'Profile picture updated',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Get.theme.primaryColor,
-          colorText: Colors.white,
-          duration: const Duration(seconds: 2),
-        );
+        Console.info('Image picked: ${image.path}');
+        CustomeSnackbar.info('Profile picture selected');
       }
     } catch (e) {
-      print('❌ Error picking image: $e');
-      Get.snackbar(
-        'Error',
-        'Failed to pick image',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Console.error('Error picking image: $e');
+      CustomeSnackbar.error('Failed to pick image');
     }
   }
 
@@ -120,26 +162,12 @@ class ProfileController extends GetxController {
 
       if (image != null) {
         profileImagePath.value = image.path;
-        print('✅ Image captured: ${image.path}');
-
-        Get.snackbar(
-          'Success',
-          'Profile picture updated',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Get.theme.primaryColor,
-          colorText: Colors.white,
-          duration: const Duration(seconds: 2),
-        );
+        Console.info('Image captured: ${image.path}');
+        CustomeSnackbar.info('Photo captured');
       }
     } catch (e) {
-      print('❌ Error taking picture: $e');
-      Get.snackbar(
-        'Error',
-        'Failed to take picture',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Console.error('Error taking picture: $e');
+      CustomeSnackbar.error('Failed to take picture');
     }
   }
 
@@ -186,141 +214,102 @@ class ProfileController extends GetxController {
     );
   }
 
-  /// Update profile - REQUIRES PASSWORD VERIFICATION
+  /// Update profile via API
   Future<void> updateProfile() async {
-    // First validate inputs
     if (!_validateInputs()) return;
-
-    // MUST verify password before updating
-    if (!_verifyPassword()) {
-      return; // Password verification failed
-    }
 
     isLoading.value = true;
 
     try {
-      // Simulate API delay
-      await Future.delayed(const Duration(seconds: 1));
+      Console.info('Updating profile...');
 
-      // Update display values (local only)
-      userName.value = nameController.text;
-      userEmail.value = emailController.text;
-      userPhone.value = phoneController.text;
+      final Map<String, String> fields = {
+        'full_name': nameController.text.trim(),
+        'mobile_number': phoneController.text.trim(),
+      };
 
-      // TODO: Save to backend/GetStorage
-      // await ApiService.updateProfile({
-      //   'name': nameController.text,
-      //   'email': emailController.text,
-      //   'phone': phoneController.text,
-      //   'password': passwordController.text, // For verification
-      // });
+      final Map<String, File>? files = profileImagePath.value.isNotEmpty
+          ? {'profile_picture': File(profileImagePath.value)}
+          : null;
 
-      print('✅ Profile updated:');
-      print('   Name: ${userName.value}');
-      print('   Email: ${userEmail.value}');
-      print('   Phone: ${userPhone.value}');
-      print('   Image: ${profileImagePath.value}');
+      Console.info('Fields: $fields');
+      Console.info('Has image: ${files != null}');
 
-      // Clear password field
-      passwordController.clear();
-
-      // Exit edit mode
-      isEditMode.value = false;
-
-      Get.snackbar(
-        'Success',
-        'Profile updated successfully',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Get.theme.primaryColor,
-        colorText: Colors.white,
+      final response = await ApiService.uploadMultipart(
+        url: ApiEndpoints.profile,
+        method: 'PATCH',
+        fields: fields,
+        files: files,
       );
+
+      if (response.success) {
+        Console.success('Profile updated successfully');
+        Console.info('Response: ${response.data}');
+
+        profileImagePath.value = '';
+        isEditMode.value = false;
+
+        CustomeSnackbar.success('Profile updated successfully');
+
+        // Refresh profile data
+        await fetchProfile();
+      } else {
+        Console.error('Update failed: ${response.message}');
+        CustomeSnackbar.error(response.message ?? 'Failed to update profile');
+      }
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to update profile',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Console.error('Update error: $e');
+      CustomeSnackbar.error('Failed to update profile');
     } finally {
       isLoading.value = false;
     }
   }
 
-  /// Verify password before updating profile
-  bool _verifyPassword() {
-    final password = passwordController.text.trim();
-
-    // Password is required
-    if (password.isEmpty) {
-      Get.snackbar(
-        'Password Required',
-        'Please enter your password to update profile',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 3),
-      );
-      return false;
-    }
-
-    // Check if password matches
-    // TODO: In production, send to backend for verification
-    if (password != userPassword.value) {
-      Get.snackbar(
-        'Incorrect Password',
-        'The password you entered is incorrect',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 3),
-      );
-      return false;
-    }
-
-    return true;
-  }
-
-  /// Validate inputs
+  /// Validate input fields
   bool _validateInputs() {
     if (nameController.text.trim().isEmpty) {
-      Get.snackbar('Error', 'Please enter your name');
-      return false;
-    }
-
-    if (emailController.text.trim().isEmpty) {
-      Get.snackbar('Error', 'Please enter your email');
-      return false;
-    }
-
-    if (!GetUtils.isEmail(emailController.text.trim())) {
-      Get.snackbar('Error', 'Please enter a valid email');
+      CustomeSnackbar.error('Please enter your name');
       return false;
     }
 
     if (phoneController.text.trim().isEmpty) {
-      Get.snackbar('Error', 'Please enter your phone number');
+      CustomeSnackbar.error('Please enter your phone number');
+      return false;
+    }
+
+    if (phoneController.text.trim().length < 10) {
+      CustomeSnackbar.error('Please enter a valid phone number');
       return false;
     }
 
     return true;
   }
 
+  /// Logout user
   void logout() async {
     await StorageService.clearAll();
     Get.offAllNamed(RoutesName.login);
   }
 
-  /// Toggle password visibility
-  void togglePasswordVisibility() {
-    showPassword.value = !showPassword.value;
-  }
-
-  /// Get current profile image to display
+  /// Get current profile image provider with debug logs
   ImageProvider? get currentProfileImage {
+    Console.info('Getting current profile image...');
+    Console.info('  Local path: ${profileImagePath.value}');
+    Console.info('  Cloud URL: ${profileImageUrl.value}');
+
+    // Show local image if selected during edit
     if (profileImagePath.value.isNotEmpty) {
+      Console.info('  Returning: FileImage (local)');
       return FileImage(File(profileImagePath.value));
     }
+
+    // Show cloud image if exists
+    if (profileImageUrl.value.isNotEmpty) {
+      Console.info('  Returning: NetworkImage (cloud)');
+      return NetworkImage(profileImageUrl.value);
+    }
+
+    Console.info('  Returning: null (no image)');
     return null;
   }
 }
