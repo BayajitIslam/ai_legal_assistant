@@ -8,6 +8,21 @@ import 'package:template/core/utils/console.dart';
 class StorageService {
   static SharedPreferences? _prefs;
 
+  /// Initialize SharedPreferences - call this in main() before runApp()
+  static Future<void> init() async {
+    _prefs = await SharedPreferences.getInstance();
+    Console.storage('StorageService initialized');
+  }
+
+  static SharedPreferences get _box {
+    if (_prefs == null) {
+      throw Exception(
+        'StorageService not initialized. Call StorageService.init() first.',
+      );
+    }
+    return _prefs!;
+  }
+
   // ═══════════════════════════════════════════════════════════════════════
   // Storage Keys - Single source of truth
   // ═══════════════════════════════════════════════════════════════════════
@@ -39,16 +54,6 @@ class StorageService {
 
   // FCM Keys
   static const String keyFcmToken = 'fcmToken';
-
-  // ═══════════════════════════════════════════════════════════════════════
-  // Initialization
-  // ═══════════════════════════════════════════════════════════════════════
-
-  /// Initialize SharedPreferences
-  static Future<void> init() async {
-    _prefs = await SharedPreferences.getInstance();
-    Console.storage(' StorageService initialized');
-  }
 
   /// Get SharedPreferences instance
   static Future<SharedPreferences> get _instance async {
@@ -273,6 +278,10 @@ class StorageService {
     await remove(keyHasUsedTrial);
 
     Console.info('Subscription data cleared');
+  }
+
+  static String getAccessTokenString() {
+    return _box.getString(keyAccessToken) ?? '';
   }
 
   // ═══════════════════════════════════════════════════════════════════════

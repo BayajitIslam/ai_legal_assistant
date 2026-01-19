@@ -1,5 +1,5 @@
 class ApiEndpoints {
-  static const String baseUrl = 'http://10.10.7.22:12002';
+  static const String baseUrl = 'https://harryapi.dsrt321.online';
 
   //====================== Auth ======================
   static const String signup = '$baseUrl/api/register/';
@@ -9,4 +9,18 @@ class ApiEndpoints {
       '$baseUrl/api/password-reset-request/';
   static const String resetPasswordConfirm = '$baseUrl/api/password-reset/';
   static const String verifyResetOTP = '$baseUrl/api/verify-reset-otp/';
+
+  //====================== Chat ======================
+  static const String getChatSessions = '$baseUrl/api/chat/sessions/';
+  static const String createChatSession = '$baseUrl/api/chat/sessions/create/';
+  static String getChatSession(String sessionId) =>
+      '$baseUrl/api/chat/sessions/$sessionId/';
+  static String updateChatSession(String sessionId) =>
+      '$baseUrl/api/chat/sessions/$sessionId/';
+  static String deleteChatSession(String sessionId) =>
+      '$baseUrl/api/chat/sessions/$sessionId/';
+  static const String sendMessage = '$baseUrl/api/chat/send/';
+
+  //====================== Profile ======================
+  static const String profile = '$baseUrl/api/profile/';
 }

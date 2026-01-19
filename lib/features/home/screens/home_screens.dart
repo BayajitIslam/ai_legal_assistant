@@ -1,5 +1,3 @@
-// lib/screens/chat_home_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -19,8 +17,11 @@ class HomeScreens extends GetView<ChatController> {
   static final GlobalKey<ScaffoldState> scaffoldKey =
       GlobalKey<ScaffoldState>();
 
-  // Text controller - GetX will auto-dispose this
+  // Text controller
   final TextEditingController textController = TextEditingController();
+
+  //  Scroll controller for auto-scroll
+  final ScrollController scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +52,7 @@ class HomeScreens extends GetView<ChatController> {
 
             // Disclaimer
             _buildDisclaimer(),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
           ],
         ),
       ),
@@ -63,11 +64,19 @@ class HomeScreens extends GetView<ChatController> {
       final messages = controller.currentMessages;
       final isLoading = controller.isLoading.value;
 
+      //  Auto-scroll when messages change
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (scrollController.hasClients && messages.isNotEmpty) {
+          _scrollToBottom();
+        }
+      });
+
       if (messages.isEmpty && !isLoading) {
         return _buildEmptyState();
       }
 
       return ListView.builder(
+        controller: scrollController, //  Add scroll controller
         padding: const EdgeInsets.symmetric(vertical: 16),
         reverse: false,
         itemCount: messages.length + (isLoading ? 1 : 0),
@@ -154,6 +163,7 @@ class HomeScreens extends GetView<ChatController> {
                   if (value.trim().isNotEmpty) {
                     controller.sendMessage(value);
                     textController.clear();
+                    _scrollToBottom();
                   }
                 },
                 style: const TextStyle(color: Colors.white),
@@ -181,6 +191,7 @@ class HomeScreens extends GetView<ChatController> {
                             if (textController.text.trim().isNotEmpty) {
                               controller.sendMessage(textController.text);
                               textController.clear();
+                              _scrollToBottom();
                             }
                           },
                     child: SvgPicture.asset(
@@ -198,5 +209,16 @@ class HomeScreens extends GetView<ChatController> {
         ),
       ),
     );
+  }
+
+  //  Smooth scroll to bottom
+  void _scrollToBottom() {
+    if (scrollController.hasClients) {
+      scrollController.animateTo(
+        scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
   }
 }

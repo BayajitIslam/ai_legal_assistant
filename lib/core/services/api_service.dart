@@ -52,12 +52,12 @@ class ApiService {
   /// Headers with authentication
   static Map<String, String> get _authHeaders => {
     ..._defaultHeaders,
-    'Authorization': 'Bearer ${StorageService.getAccessToken()}',
+    'Authorization': 'Bearer ${StorageService.getAccessTokenString()}',
   };
 
   /// Multipart headers with authentication
   static Map<String, String> get _multipartAuthHeaders => {
-    'Authorization': 'Bearer ${StorageService.getAccessToken()}',
+    'Authorization': 'Bearer ${StorageService.getAccessTokenString()}',
   };
 
   // ─────────────────────────────────────────────────────────────────────────

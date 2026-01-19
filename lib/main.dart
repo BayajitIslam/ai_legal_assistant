@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:template/core/services/local%20storage/storage_service.dart';
 import 'package:template/core/themes/themes.dart';
 import 'package:template/routes/app_routes.dart';
 import 'package:template/routes/routes_name.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await StorageService.init();
+
   runApp(const MyApp());
 }
 

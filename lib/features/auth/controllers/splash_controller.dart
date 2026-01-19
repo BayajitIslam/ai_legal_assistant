@@ -22,13 +22,13 @@ class SplashController extends GetxService {
       SharedPreferences prefs = await SharedPreferences.getInstance();
 
       // Check if user is logged in
-      bool? isLoggedIn = prefs.getBool('is_logged_in') ?? false;
+      bool? isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
 
       if (isLoggedIn) {
-        Get.offAllNamed(RoutesName.signUp);
+        Get.offAllNamed(RoutesName.home);
       } else {
         // User not logged in → LoginPage
-        Get.offAllNamed(RoutesName.signUp);
+        Get.offAllNamed(RoutesName.login);
       }
     });
   }
