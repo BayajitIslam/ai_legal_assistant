@@ -86,11 +86,14 @@ class OtpScreen extends GetView<AuthController> {
                     title: otpController.isLoading.value
                         ? 'Verifying...'
                         : 'Verify Code',
+                    isLoading: otpController.isLoading.value,
                     onTap: otpController.isLoading.value
                         ? null
                         : otpController.verifyOTP,
                   ),
                 ),
+
+                
               ],
             ),
           ),

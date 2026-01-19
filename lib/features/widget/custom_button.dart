@@ -8,6 +8,7 @@ class CustomeButton extends StatefulWidget {
   final Color? textColor;
   final String title;
   final void Function()? onTap;
+  final bool isLoading; // Loading state
 
   const CustomeButton({
     super.key,
@@ -15,6 +16,7 @@ class CustomeButton extends StatefulWidget {
     required this.onTap,
     required this.title,
     this.textColor = AppColors.whiteText,
+    this.isLoading = false, // Default false
   });
 
   @override
@@ -27,20 +29,22 @@ class _CustomeButtonState extends State<CustomeButton> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTapDown: (_) => setState(() => _isPressed = true),
-      onTapUp: (_) {
+      onTapDown: widget.isLoading ? null : (_) => setState(() => _isPressed = true),
+      onTapUp: widget.isLoading ? null : (_) {
         setState(() => _isPressed = false);
         widget.onTap?.call();
       },
-      onTapCancel: () => setState(() => _isPressed = false),
+      onTapCancel: widget.isLoading ? null : () => setState(() => _isPressed = false),
       child: AnimatedContainer(
-        duration: Duration(milliseconds: 150),
+        duration: const Duration(milliseconds: 150),
         curve: Curves.easeInOut,
         width: double.infinity,
         height: 48.h,
         transform: Matrix4.translationValues(0, _isPressed ? 2 : 0, 0),
         decoration: BoxDecoration(
-          color: widget.bgColor,
+          color: widget.isLoading 
+              ? widget.bgColor?.withOpacity(0.7) 
+              : widget.bgColor,
           borderRadius: BorderRadius.circular(30),
           boxShadow: [
             BoxShadow(
@@ -52,13 +56,24 @@ class _CustomeButtonState extends State<CustomeButton> {
           ],
         ),
         child: Center(
-          child: Text(
-            widget.title,
-            style: AppTextStyles.s16w4p(
-              fontweight: FontWeight.w700,
-              color: widget.textColor,
-            ),
-          ),
+          child: widget.isLoading
+              ? SizedBox(
+                  width: 20.w,
+                  height: 20.h,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.5,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      widget.textColor ?? AppColors.whiteText,
+                    ),
+                  ),
+                )
+              : Text(
+                  widget.title,
+                  style: AppTextStyles.s16w4p(
+                    fontweight: FontWeight.w700,
+                    color: widget.textColor,
+                  ),
+                ),
         ),
       ),
     );

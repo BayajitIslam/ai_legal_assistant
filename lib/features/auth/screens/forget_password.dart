@@ -68,10 +68,13 @@ class ForgetPassword extends GetView<AuthController> {
 
                 //Reset Password Here
                 SizedBox(height: 24.h),
-                CustomeButton(
-                  bgColor: AppColors.brand,
-                  onTap: controller.sendPasswordResetEmail,
-                  title: AppString.resetPassword,
+                Obx(
+                  () => CustomeButton(
+                    bgColor: AppColors.brand,
+                    isLoading: controller.isLoading.value,
+                    onTap: controller.sendPasswordResetEmail,
+                    title: AppString.resetPassword,
+                  ),
                 ),
               ],
             ),

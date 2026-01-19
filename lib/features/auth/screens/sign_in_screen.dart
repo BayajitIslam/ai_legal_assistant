@@ -70,11 +70,12 @@ class SignInScreen extends GetView<AuthController> {
               ),
               //Sign In Here
               SizedBox(height: 27.h),
-              CustomeButton(
+              Obx(() =>CustomeButton(
+                isLoading: controller.isLoading.value,
                 bgColor: AppColors.brand,
                 onTap: controller.signIn,
                 title: AppString.signin,
-              ),
+              ),),
 
               //Sign Up Here
               SizedBox(height: 20.h),

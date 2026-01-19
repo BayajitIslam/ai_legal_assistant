@@ -87,10 +87,13 @@ class SignUpScreen extends GetView<AuthController> {
 
                 //Sign Up Here
                 SizedBox(height: 55.h),
-                CustomeButton(
-                  bgColor: AppColors.brand,
-                  onTap: controller.signUp,
-                  title: AppString.signup,
+                Obx(
+                  () => CustomeButton(
+                    bgColor: AppColors.brand,
+                    isLoading: controller.isLoading.value,
+                    onTap: controller.signUp,
+                    title: AppString.signup,
+                  ),
                 ),
 
                 //Sign In Here

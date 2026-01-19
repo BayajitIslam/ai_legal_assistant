@@ -60,10 +60,13 @@ class PasswordReset extends GetView<AuthController> {
               ),
               //Update Password  Here
               SizedBox(height: 27.h),
-              CustomeButton(
-                bgColor: AppColors.brand,
-                onTap: controller.resetPassword,
-                title: AppString.signin,
+              Obx(
+                () => CustomeButton(
+                  bgColor: AppColors.brand,
+                  isLoading: controller.isLoading.value,
+                  onTap: controller.resetPassword,
+                  title: AppString.signin,
+                ),
               ),
             ],
           ),
