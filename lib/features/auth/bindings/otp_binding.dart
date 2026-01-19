@@ -1,5 +1,5 @@
+import 'package:ai_legal_assistant/features/auth/controllers/otp_controller.dart';
 import 'package:get/get.dart';
-import 'package:template/features/auth/controllers/otp_controller.dart';
 
 class OtpBindingForgetPassword extends Bindings {
   @override

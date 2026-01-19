@@ -1,7 +1,7 @@
 import 'dart:async';
+import 'package:ai_legal_assistant/routes/routes_name.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:template/routes/routes_name.dart';
 
 class SplashController extends GetxService {
   Timer? timer;

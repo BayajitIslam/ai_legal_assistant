@@ -1,5 +1,5 @@
+import 'package:ai_legal_assistant/features/auth/controllers/auth_controller.dart.dart';
 import 'package:get/get.dart';
-import 'package:template/features/auth/controllers/auth_controller.dart.dart';
 
 class AuthBinding extends Bindings {
   @override

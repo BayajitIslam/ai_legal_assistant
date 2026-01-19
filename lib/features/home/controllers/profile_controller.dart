@@ -1,12 +1,12 @@
+import 'package:ai_legal_assistant/core/constants/api_endpoints.dart';
+import 'package:ai_legal_assistant/core/services/api_service.dart';
+import 'package:ai_legal_assistant/core/services/local%20storage/storage_service.dart';
+import 'package:ai_legal_assistant/core/utils/console.dart';
+import 'package:ai_legal_assistant/features/widget/custome_snackbar.dart';
+import 'package:ai_legal_assistant/routes/routes_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:template/core/constants/api_endpoints.dart';
-import 'package:template/core/services/api_service.dart';
-import 'package:template/core/services/local%20storage/storage_service.dart';
-import 'package:template/core/utils/console.dart';
-import 'package:template/features/widget/custome_snackbar.dart';
-import 'package:template/routes/routes_name.dart';
 import 'dart:io';
 
 class ProfileController extends GetxController {

@@ -1,15 +1,15 @@
+import 'package:ai_legal_assistant/core/constants/app_colors.dart';
+import 'package:ai_legal_assistant/core/constants/app_string.dart';
+import 'package:ai_legal_assistant/core/constants/image_const.dart';
+import 'package:ai_legal_assistant/core/themes/app_text_style.dart';
+import 'package:ai_legal_assistant/features/auth/controllers/auth_controller.dart.dart';
+import 'package:ai_legal_assistant/features/auth/widgets/custome_textfield.dart';
+import 'package:ai_legal_assistant/features/widget/custom_button.dart';
+import 'package:ai_legal_assistant/features/widget/custome_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:template/core/constants/app_colors.dart';
-import 'package:template/core/constants/app_string.dart';
-import 'package:template/core/constants/image_const.dart';
-import 'package:template/core/themes/app_text_style.dart';
-import 'package:template/features/auth/controllers/auth_controller.dart.dart';
-import 'package:template/features/auth/widgets/custome_textfield.dart';
-import 'package:template/features/widget/custom_button.dart';
-import 'package:template/features/widget/custome_header.dart';
 
 class PasswordReset extends GetView<AuthController> {
   const PasswordReset({super.key});

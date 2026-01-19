@@ -1,5 +1,5 @@
+import 'package:ai_legal_assistant/core/utils/console.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:template/core/utils/console.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
 /// STORAGE SERVICE

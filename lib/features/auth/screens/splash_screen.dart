@@ -1,10 +1,10 @@
+import 'package:ai_legal_assistant/core/constants/app_string.dart';
+import 'package:ai_legal_assistant/core/constants/image_const.dart';
+import 'package:ai_legal_assistant/core/themes/app_text_style.dart';
+import 'package:ai_legal_assistant/features/auth/controllers/splash_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/instance_manager.dart';
-import 'package:template/core/constants/app_string.dart';
-import 'package:template/core/constants/image_const.dart';
-import 'package:template/core/themes/app_text_style.dart';
-import 'package:template/features/auth/controllers/splash_controller.dart';
 
 class SplashScreen extends StatelessWidget {
   SplashScreen({super.key});

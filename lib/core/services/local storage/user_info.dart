@@ -1,4 +1,4 @@
-import 'package:template/core/services/local%20storage/storage_service.dart';
+import 'package:ai_legal_assistant/core/services/local%20storage/storage_service.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
 /// USER INFO

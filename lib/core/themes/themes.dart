@@ -1,5 +1,5 @@
+import 'package:ai_legal_assistant/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:template/core/constants/app_colors.dart';
 
 class MyAppThemes {
   static ThemeData get lightThemes => ThemeData(

@@ -1,8 +1,8 @@
+import 'package:ai_legal_assistant/core/constants/app_colors.dart';
+import 'package:ai_legal_assistant/core/constants/image_const.dart';
+import 'package:ai_legal_assistant/core/themes/app_text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:template/core/constants/app_colors.dart';
-import 'package:template/core/constants/image_const.dart';
-import 'package:template/core/themes/app_text_style.dart';
 import '../models/chat_models.dart';
 
 class UserMessageBubble extends StatelessWidget {

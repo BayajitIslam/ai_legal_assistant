@@ -1,11 +1,11 @@
+import 'package:ai_legal_assistant/core/constants/app_colors.dart';
+import 'package:ai_legal_assistant/core/constants/image_const.dart';
+import 'package:ai_legal_assistant/core/themes/app_text_style.dart';
+import 'package:ai_legal_assistant/features/widget/custome_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:template/core/constants/app_colors.dart';
-import 'package:template/core/constants/image_const.dart';
-import 'package:template/core/themes/app_text_style.dart';
-import 'package:template/features/widget/custome_header.dart';
 import '../controllers/chat_controller.dart';
 import '../widgets/chat_drawer.dart';
 import '../widgets/message_bubble.dart';

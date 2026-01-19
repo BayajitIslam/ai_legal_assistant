@@ -1,5 +1,5 @@
+import 'package:ai_legal_assistant/features/home/controllers/profile_controller.dart';
 import 'package:get/get.dart';
-import 'package:template/features/home/controllers/profile_controller.dart';
 
 class ProfileBinding extends Bindings {
   @override

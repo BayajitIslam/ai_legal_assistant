@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:ai_legal_assistant/core/services/local%20storage/storage_service.dart';
+import 'package:ai_legal_assistant/core/utils/console.dart';
+import 'package:ai_legal_assistant/features/widget/custome_snackbar.dart';
 import 'package:http/http.dart' as http;
-import 'package:template/core/services/local%20storage/storage_service.dart';
-import 'package:template/core/utils/console.dart';
-import 'package:template/features/widget/custome_snackbar.dart';
 
 /// ═══════════════════════════════════════════════════════════════════════════
 /// API RESPONSE WRAPPER
