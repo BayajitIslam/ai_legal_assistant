@@ -12,7 +12,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class OtpScreen extends GetView<AuthController> {
-  final String verificationType; // 'signup' or 'forgot_password'
+  final String verificationType;
   final String? email;
   const OtpScreen({super.key, required this.verificationType, this.email});
 
@@ -27,21 +27,21 @@ class OtpScreen extends GetView<AuthController> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                //Header
+                // Header
                 CustomeHeader(title: AppString.forgotPassword),
 
-                //Logo Here
+                // Logo
                 Image.asset(
                   AppImages.legalAiLogo,
                   width: 132.5.w,
                   height: 106.h,
                 ),
 
-                //Title Here
+                // Title
                 SizedBox(height: 23.h),
                 Text(AppString.checkYourEmail, style: AppTextStyles.s20w7i()),
 
-                //Description Here
+                // Description
                 SizedBox(height: 5.h),
                 verificationType == "forgot_password"
                     ? Text(
@@ -55,7 +55,7 @@ class OtpScreen extends GetView<AuthController> {
                         style: AppTextStyles.s14w4i(),
                       ),
 
-                //Otp Field Here
+                // OTP Fields
                 SizedBox(height: 51.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -64,9 +64,9 @@ class OtpScreen extends GetView<AuthController> {
                     (index) => _buildOTPBox(otpController, index),
                   ),
                 ),
-                //Error Message
-                SizedBox(height: 8.h),
 
+                // Error Message
+                SizedBox(height: 8.h),
                 Align(
                   alignment: AlignmentGeometry.centerLeft,
                   child: Obx(
@@ -77,15 +77,11 @@ class OtpScreen extends GetView<AuthController> {
                   ),
                 ),
 
-                //Reset Password Here
+                // Verify Button
                 SizedBox(height: 24.h),
-
-                // Submit Button
                 Obx(
                   () => CustomeButton(
-                    title: otpController.isLoading.value
-                        ? 'Verifying...'
-                        : 'Verify Code',
+                    title: AppString.veryfycode,
                     isLoading: otpController.isLoading.value,
                     onTap: otpController.isLoading.value
                         ? null
@@ -93,7 +89,9 @@ class OtpScreen extends GetView<AuthController> {
                   ),
                 ),
 
-                
+                // Resend Section
+                SizedBox(height: 24.h),
+                _buildResendSection(otpController),
               ],
             ),
           ),
@@ -102,7 +100,53 @@ class OtpScreen extends GetView<AuthController> {
     );
   }
 
-  //
+  // Resend Section with Timer
+  Widget _buildResendSection(OTPController controller) {
+    return Obx(() {
+      if (controller.canResend.value) {
+        // Show resend button after timer ends
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              AppString.haventgotemailyet,
+              style: AppTextStyles.s14w4i(color: AppColors.pText),
+            ),
+            GestureDetector(
+              onTap: controller.resendOTP,
+              child: Text(
+                AppString.resendemail,
+                style: AppTextStyles.s14w4i(
+                  color: AppColors.brand,
+                  fontweight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        );
+      } else {
+        // Show timer
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              AppString.resendcodein,
+              style: AppTextStyles.s14w4i(color: AppColors.pText),
+            ),
+            Text(
+              controller.formatTime(controller.remainingTime.value),
+              style: AppTextStyles.s14w4i(
+                color: AppColors.brand,
+                fontweight: FontWeight.w600,
+              ),
+            ),
+          ],
+        );
+      }
+    });
+  }
+
+  // OTP Box Widget
   Widget _buildOTPBox(OTPController controller, int index) {
     return Container(
       width: 48.w,
@@ -114,7 +158,6 @@ class OtpScreen extends GetView<AuthController> {
           BoxShadow(
             color: const Color(0x40A3A3A3),
             blurRadius: 4,
-
             blurStyle: BlurStyle.outer,
           ),
           BoxShadow(

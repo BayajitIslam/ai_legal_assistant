@@ -9,6 +9,7 @@ class ApiEndpoints {
       '$baseUrl/api/password-reset-request/';
   static const String resetPasswordConfirm = '$baseUrl/api/password-reset/';
   static const String verifyResetOTP = '$baseUrl/api/verify-reset-otp/';
+  static const String resendOTP = '$baseUrl/api/resend-otp/';
 
   //====================== Chat ======================
   static const String getChatSessions = '$baseUrl/api/chat/sessions/';

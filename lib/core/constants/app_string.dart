@@ -31,6 +31,7 @@ class AppString {
   static const String legalAdvice =
       "This AI assistant provides general legal information only. Consult a licensed attorney for legal advice.";
   static const String askLegalGPT = "Ask LegalGPT";
+  static const String resendcodein = "Resend code in ";
 
   static const String update = " Update";
   static const String profile = "Profile";

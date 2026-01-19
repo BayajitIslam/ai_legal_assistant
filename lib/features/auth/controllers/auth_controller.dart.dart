@@ -221,7 +221,7 @@ class AuthController extends GetxController {
           RoutesName.forgetPasswordotpScreen,
           arguments: {
             'email': forgotPasswordEmailController.text.toLowerCase().trim(),
-            'otp_type': 'reset',
+            'otp_type': 'password_reset',
           },
         );
       } else if (response.statusCode == 400 ||
