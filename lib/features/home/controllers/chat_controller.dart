@@ -48,35 +48,13 @@ class ChatController extends GetxController {
     }
   }
 
-  /// Create new empty chat session via API
+  /// Create new empty chat (clears current session, backend session created on first message)
   Future<void> createNewChat() async {
-    try {
-      isLoading.value = true;
-
-      final response = await ApiService.postAuth(
-        ApiEndpoints.createChatSession,
-      );
-
-      if (response.success && response.data != null) {
-        final newSession = ChatSessionModel.fromApiJson(
-          response.data['data']['session'],
-        );
-
-        // Add to top of list
-        chatSessions.insert(0, newSession);
-        currentSession.value = newSession;
-
-        Console.info('Created new chat session: ${newSession.id}');
-        _closeDrawer();
-      } else {
-        CustomeSnackbar.error('Failed to create new chat');
-      }
-    } catch (e) {
-      Console.error('Error creating chat: $e');
-      CustomeSnackbar.error('Failed to create new chat');
-    } finally {
-      isLoading.value = false;
-    }
+    // Simply clear current session - no backend call
+    // Backend session will be created when user sends first message
+    currentSession.value = null;
+    Console.info('Cleared current session for new chat');
+    _closeDrawer();
   }
 
   /// Load all messages for a specific session
@@ -203,8 +181,10 @@ class ChatController extends GetxController {
             chatSessions.insert(0, currentSession.value!);
           }
 
-          // Remove temp user message
-          currentSession.value!.messages.removeLast();
+          // Remove temp user message (check if not empty to avoid RangeError)
+          if (currentSession.value!.messages.isNotEmpty) {
+            currentSession.value!.messages.removeLast();
+          }
 
           // Add real messages from backend
           final userMessageData = data['user_message'];
@@ -237,7 +217,9 @@ class ChatController extends GetxController {
       } else {
         // Remove optimistic message on error
         if (currentSession.value != null) {
-          currentSession.value!.messages.removeLast();
+          if (currentSession.value!.messages.isNotEmpty) {
+            currentSession.value!.messages.removeLast();
+          }
 
           // If was temporary session, clear it
           if (currentSession.value!.id.isEmpty) {
@@ -253,7 +235,9 @@ class ChatController extends GetxController {
 
       // Remove optimistic message on error
       if (currentSession.value != null) {
-        currentSession.value!.messages.removeLast();
+        if (currentSession.value!.messages.isNotEmpty) {
+          currentSession.value!.messages.removeLast();
+        }
 
         // If was temporary session, clear it
         if (currentSession.value!.id.isEmpty) {
