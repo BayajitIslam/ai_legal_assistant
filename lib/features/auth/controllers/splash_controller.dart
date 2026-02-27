@@ -12,13 +12,13 @@ class SplashController extends GetxService {
   @override
   void onInit() {
     super.onInit();
-    timer = Timer.periodic(Duration(seconds: 3), (Timer t) {
+    timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
       if (opacity.value != 1.0) {
         opacity.value += 0.5;
       }
     });
 
-    Future.delayed(const Duration(seconds: 3), () async {
+    Future.delayed(const Duration(seconds: 1), () async {
       SharedPreferences prefs = await SharedPreferences.getInstance();
 
       // Check if user is logged in

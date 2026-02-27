@@ -63,7 +63,16 @@ class UserMessageBubble extends StatelessWidget {
             backgroundColor: Colors.grey[300],
             backgroundImage: path != null ? NetworkImage(path!) : null,
             // If no image, show icon
-            // child:  const Icon(Icons.person, size: 16, color: Colors.white),
+            child: path == null
+                ? ClipOval(
+                    child: Image.asset(
+                      AppImages.profile, 
+                      fit: BoxFit.cover,
+                      width: 40,
+                      height: 40,
+                    ),
+                  )
+                : null,
           ),
         ],
       ),

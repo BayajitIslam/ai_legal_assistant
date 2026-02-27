@@ -1,4 +1,4 @@
-package com.sparktech.ai.legal.assistant
+package com.ai.legal.assistant
 
 import io.flutter.embedding.android.FlutterActivity
 
