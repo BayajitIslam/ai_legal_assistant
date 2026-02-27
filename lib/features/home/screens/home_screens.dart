@@ -1,6 +1,7 @@
 import 'package:ai_legal_assistant/core/constants/app_colors.dart';
 import 'package:ai_legal_assistant/core/constants/image_const.dart';
 import 'package:ai_legal_assistant/core/themes/app_text_style.dart';
+import 'package:ai_legal_assistant/features/home/controllers/profile_controller.dart';
 import 'package:ai_legal_assistant/features/widget/custome_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -63,6 +64,8 @@ class HomeScreens extends GetView<ChatController> {
     return Obx(() {
       final messages = controller.currentMessages;
       final isLoading = controller.isLoading.value;
+      ProfileController profileController = Get.find<ProfileController>();
+      final path = profileController.profileImageUrl.value;
 
       //  Auto-scroll when messages change
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -92,6 +95,7 @@ class HomeScreens extends GetView<ChatController> {
             return UserMessageBubble(
               message: message,
               formattedTime: formattedTime,
+              path: path,
             );
           } else {
             return AIMessageBubble(

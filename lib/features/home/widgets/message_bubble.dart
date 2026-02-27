@@ -8,11 +8,13 @@ import '../models/chat_models.dart';
 class UserMessageBubble extends StatelessWidget {
   final MessageModel message;
   final String formattedTime;
+  final String? path;
 
   const UserMessageBubble({
     super.key,
     required this.message,
     required this.formattedTime,
+    this.path,
   });
 
   @override
@@ -59,7 +61,7 @@ class UserMessageBubble extends StatelessWidget {
           CircleAvatar(
             radius: 20,
             backgroundColor: Colors.grey[300],
-            backgroundImage: const AssetImage('assets/images/profile_pic.jpg'),
+            backgroundImage: path != null ? NetworkImage(path!) : null,
             // If no image, show icon
             // child:  const Icon(Icons.person, size: 16, color: Colors.white),
           ),

@@ -21,7 +21,7 @@ class AppRoutes {
       name: RoutesName.home,
       page: () => HomeScreens(),
       transition: Transition.rightToLeft,
-      binding: ChatBinding(),
+      bindings: [ChatBinding(), ProfileBinding()],
     ),
     GetPage(
       name: RoutesName.login,
