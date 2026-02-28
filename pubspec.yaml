@@ -44,6 +44,7 @@ dependencies:
   uuid: ^4.2.1
   image_picker: ^1.2.1
   flutter_launcher_icons: ^0.14.4
+  in_app_review: ^2.0.11
 
 
 dev_dependencies:
@@ -61,7 +62,7 @@ dev_dependencies:
   flutter_native_splash: ^2.4.7
   
 launcher_name:
-  default: "Ai Legal Assistant"
+  default: "Legality Your Legal AI Assistant"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

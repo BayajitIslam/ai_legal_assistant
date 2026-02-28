@@ -1,5 +1,6 @@
 import 'package:ai_legal_assistant/core/constants/api_endpoints.dart';
 import 'package:ai_legal_assistant/core/services/api_service.dart';
+import 'package:ai_legal_assistant/core/services/review_service.dart';
 import 'package:ai_legal_assistant/core/utils/console.dart';
 import 'package:ai_legal_assistant/features/widget/custome_snackbar.dart';
 import 'package:get/get.dart';
@@ -13,10 +14,14 @@ class ChatController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxBool isLoadingSessions = false.obs;
 
+  final ReviewService _reviewService = ReviewService();
+
   @override
   void onInit() {
     super.onInit();
     loadChatSessions();
+    _reviewService.startReviewTimer();
+
     // Don't auto-select first session
     // currentSession stays null until user sends message or selects session
   }
